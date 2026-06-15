@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { profissionalSaudeService } from '../services/api';
 
-function ContatoForm() {
+function AtendimentoForm() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [contato, setProfissional] = useState({
+  const [atendimento, setProfissional] = useState({
     nome: '', telefone: '', endereco: '', categoria: ''
   });
 
@@ -60,4 +60,4 @@ function ContatoForm() {
   );
 }
 
-export default ContatoForm;
+export default ProfissionalSaudeForm;

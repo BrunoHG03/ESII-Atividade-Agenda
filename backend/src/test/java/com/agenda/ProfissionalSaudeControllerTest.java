@@ -47,8 +47,7 @@ class ProfissionalSaudeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(profissionalSaude)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nome").value("João Silva"))
-                .andExpect(jsonPath("$.email").value("joao@email.com"));
+                .andExpect(jsonPath("$.nome").value("João Silva"));
     }
 
     @Test

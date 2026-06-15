@@ -4,28 +4,33 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "profissionalSaude")
+@Table(name = "atendimento")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfissionalSaude {
+public class Atendimento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 100, nullable = false)
-    private String nome;
+    private String titulo;
 
-    @Column(length = 20)
-    private String telefone;
+    @Column(nullable = false)
+    private LocalDate data;
+
+    @Column(nullable = false)
+    private LocalTime horario;
 
     @Column(length = 200)
-    private String endereco;
+    private String linkVideo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private Categoria categoria;
+    private Receita receita;
 }
