@@ -38,7 +38,7 @@ function AtendimentoList() {
     <div>
       <div className="header">
         <h2>📋 Atendimentos</h2>
-        <Link to="/atendimentos/novo" className="btn btn-primary">+ Novo Profissional de Saúde</Link>
+        <Link to="/atendimentos/novo" className="btn btn-primary">+ Novo Atendimento</Link>
       </div>
 
       <table className="table">
@@ -69,7 +69,7 @@ function AtendimentoList() {
           ))}
         </tbody>
       </table>
-      {atendimentos.length === 0 && <p className="empty">Nenhum atendimento de saúde cadastrado.</p>}
+      {atendimentos.length === 0 && <p className="empty">Nenhum atendimento cadastrado.</p>}
     </div>
   );
 }

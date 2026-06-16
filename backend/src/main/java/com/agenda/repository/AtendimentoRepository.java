@@ -11,7 +11,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
 
     List<Atendimento> findAllByOrderByNomeAsc();
 
-    List<Atendimento> findByNomeContainingIgnoreCase(String nome);
+    List<Atendimento> findByTituloContainingIgnoreCase(String titulo);
 
     List<Atendimento> findByReceitaOrderByNomeAsc(Receita receita);
 }
