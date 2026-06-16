@@ -17,7 +17,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: agenda_test  # Corrigido aqui de 'agenda' para 'agenda_test'
+          MYSQL_DATABASE: agenda_test
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
@@ -50,7 +50,7 @@ jobs:
         env:
           DB_HOST: localhost
           DB_PORT: 3306
-          DB_NAME: agenda_test  # Agora bate perfeitamente com o nome acima!
+          DB_NAME: agenda_test 
           DB_USER: root
           DB_PASSWORD: root
 
@@ -81,7 +81,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: 📦 Instalar dependências
-        run: npm install  # Alterado para install padrão caso não tenha o lock-file exato
+        run: npm install
 
       - name: 🧪 Testes unitários React (Jest)
         run: npm test -- --coverage --watchAll=false
@@ -111,17 +111,17 @@ jobs:
           sleep 25  # Dá um tempo confortável para o contêiner do Spring subir
           
           # Teste 1: API Backend está respondendo (Esperado: lista vazia [])
-          curl -f http://localhost:8080/api/contatos || exit 1
+          curl -f http://localhost:8080/api/profissionais || exit 1
           
           # Teste 2: Criar contato via API (Status 201)
-          curl -X POST http://localhost:8080/api/contatos \
+          curl -X POST http://localhost:8080/api/profissionais \
             -H "Content-Type: application/json" \
-            -d '{"nome":"Cliente Teste","telefone":"11999998888","email":"teste@email.com"}' || exit 1
+            -d '{"nome":"Cliente Teste","telefone":"11999998888"}' || exit 1
           
           # Teste 3: Criar compromisso vinculado ao contato de ID 1 (Status 201)
-          curl -X POST http://localhost:8080/api/compromissos \
+          curl -X POST http://localhost:8080/api/atendimentos \
             -H "Content-Type: application/json" \
-            -d '{"titulo":"Reunião Sprint","data":"2026-12-20","hora":"10:00","contato":{"id":1}}' || exit 1
+            -d '{"titulo":"Atd1","data":"2026-12-20","hora":"10:00"' || exit 1
           
           # Teste 4: Frontend está acessível (Status 200)
           curl -f http://localhost:3000 || exit 1
