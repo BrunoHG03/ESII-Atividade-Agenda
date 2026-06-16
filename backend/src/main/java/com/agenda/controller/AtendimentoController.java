@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/contatos")
+@RequestMapping("/api/atendimentos")
 @CrossOrigin(origins = "*")
 public class AtendimentoController {
 
@@ -23,8 +23,8 @@ public class AtendimentoController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<Atendimento> criar(@Valid @RequestBody Atendimento profissionalSaude) {
-        Atendimento salvo = repository.save(profissionalSaude);
+    public ResponseEntity<Atendimento> criar(@Valid @RequestBody Atendimento atendimento) {
+        Atendimento salvo = repository.save(atendimento);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
