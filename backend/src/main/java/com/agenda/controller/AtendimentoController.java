@@ -3,7 +3,7 @@ package com.agenda.controller;
 import com.agenda.model.Atendimento;
 import com.agenda.model.Receita;
 import com.agenda.repository.AtendimentoRepository;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

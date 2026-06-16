@@ -45,7 +45,7 @@ class ExameControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(exame)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.titulo").value("exame1"));
+                .andExpect(jsonPath("$.descricao").value("exame1"));
     }
 
     @Test

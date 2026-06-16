@@ -1,0 +1,159 @@
+name: CI/CD Pipeline - Agenda Web (Java + React)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ========================================
+  # JOB 1: TESTES DO BACKEND (Java/Spring Boot)
+  # ========================================
+  test-backend:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: agenda_test  # Corrigido aqui de 'agenda' para 'agenda_test'
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: ☕ Configurar Java 11 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 🧪 Testes Unitários (JUnit 5 + Mockito)
+        run: mvn test -Dtest="*ControllerTest" -B
+
+      - name: 🔗 Testes de Integração (Spring Boot + MySQL)
+        run: mvn test -Dtest="IntegracaoTest" -B
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_NAME: agenda_test  # Agora bate perfeitamente com o nome acima!
+          DB_USER: root
+          DB_PASSWORD: root
+
+      - name: 📊 Cobertura de código (JaCoCo > 80%)
+        run: |
+          mvn verify -B
+          echo "✅ Relatório de cobertura gerado em target/site/jacoco/"
+
+  # ========================================
+  # JOB 2: TESTES DO FRONTEND (React)
+  # ========================================
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 📦 Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Instalar dependências
+        run: npm install  # Alterado para install padrão caso não tenha o lock-file exato
+
+      - name: 🧪 Testes unitários React (Jest)
+        run: npm test -- --coverage --watchAll=false
+
+      - name: 🏗️ Build de produção
+        run: npm run build
+
+  # ========================================
+  # JOB 3: BUILD & DEPLOY (CD)
+  # ========================================
+  deploy:
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🐳 Build das imagens Docker
+        run: |
+          docker-compose build
+
+      - name: ✅ Testes de Aceitação (E2E)
+        run: |
+          docker-compose up -d
+          sleep 25  # Dá um tempo confortável para o contêiner do Spring subir
+          
+          # Teste 1: API Backend está respondendo (Esperado: lista vazia [])
+          curl -f http://localhost:8080/api/contatos || exit 1
+          
+          # Teste 2: Criar contato via API (Status 201)
+          curl -X POST http://localhost:8080/api/contatos \
+            -H "Content-Type: application/json" \
+            -d '{"nome":"Cliente Teste","telefone":"11999998888","email":"teste@email.com"}' || exit 1
+          
+          # Teste 3: Criar compromisso vinculado ao contato de ID 1 (Status 201)
+          curl -X POST http://localhost:8080/api/compromissos \
+            -H "Content-Type: application/json" \
+            -d '{"titulo":"Reunião Sprint","data":"2026-12-20","hora":"10:00","contato":{"id":1}}' || exit 1
+          
+          # Teste 4: Frontend está acessível (Status 200)
+          curl -f http://localhost:3000 || exit 1
+          
+          docker-compose down
+          echo "✔ Todos os testes de aceitação passaram!"
+
+      - name: 🔑 Configurar Credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: 🔓 Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 📤 Push imagens para Amazon ECR
+        run: |
+          docker tag agenda-web-backend:latest ${{ secrets.ECR_REGISTRY }}/agenda-backend:latest
+          docker tag agenda-web-frontend:latest ${{ secrets.ECR_REGISTRY }}/agenda-frontend:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/agenda-backend:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/agenda-frontend:latest
+
+      - name: 🚀 Deploy para AWS ECS/EC2
+        run: |
+          aws ecs update-service --cluster agenda-cluster --service agenda-backend --force-new-deployment
+          aws ecs update-service --cluster agenda-cluster --service agenda-frontend --force-new-deployment
+
+      - name: 🏁 Health Check em Produção
+        run: |
+          sleep 60  # Tempo para a AWS rodar o novo contêiner
+          curl -f http://${{ secrets.AWS_APP_URL }}/api/contatos || exit 1
+          echo "✅ Aplicação em produção na AWS!"

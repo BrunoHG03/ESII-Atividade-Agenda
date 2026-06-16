@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Backend - Java Spring Boot (porta 8080)
+  backend:
+    build: ./backend
+    ports: 
+      - "8080:8080"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=agenda_test
+      - DB_USER=root
+      - DB_PASSWORD=root
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Frontend - React + Nginx (porta 3000)
+  frontend:
+    build: ./frontend
+    ports: 
+      - "3000:80"
+    depends_on:
+      - backend
+
+  # Banco de Dados - MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: agenda_test
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

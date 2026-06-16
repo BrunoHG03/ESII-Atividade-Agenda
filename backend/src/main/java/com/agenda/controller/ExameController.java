@@ -2,7 +2,7 @@ package com.agenda.controller;
 
 import com.agenda.model.Exame;
 import com.agenda.repository.ExameRepository;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
