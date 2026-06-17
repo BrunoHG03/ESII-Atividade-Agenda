@@ -30,7 +30,7 @@ public class ExameController {
     // READ TUDO
     @GetMapping
     public ResponseEntity<List<Exame>> listar() {
-        List<Exame> exames = repository.findAllByOrderByNomeAsc();
+        List<Exame> exames = repository.findAllByOrderByDescricaoAsc();
         return ResponseEntity.ok(exames);
     }
 

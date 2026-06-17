@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface ExameRepository extends JpaRepository<Exame, Long> {
 
-    List<Exame> findAllByOrderByNomeAsc();
+    List<Exame> findAllByOrderByDescricaoAsc();
 
-    List<Exame> findByNomeContainingIgnoreCase(String nome);
+    List<Exame> findByPatologiaContainingIgnoreCase(String patologia);
 }

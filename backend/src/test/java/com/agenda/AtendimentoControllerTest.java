@@ -56,7 +56,7 @@ class AtendimentoControllerTest {
 
     @Test
     void deveListarAtendimentosVazio() throws Exception {
-        when(repository.findAllByOrderByNomeAsc()).thenReturn(Arrays.asList());
+        when(repository.findAllByOrderByTituloAsc()).thenReturn(Arrays.asList());
 
         mockMvc.perform(get("/api/atendimentos"))
                 .andExpect(status().isOk())

@@ -50,7 +50,7 @@ class ExameControllerTest {
 
     @Test
     void deveListarExamesVazio() throws Exception {
-        when(repository.findAllByOrderByNomeAsc()).thenReturn(Arrays.asList());
+        when(repository.findAllByOrderByDescricaoAsc()).thenReturn(Arrays.asList());
 
         mockMvc.perform(get("/api/exames"))
                 .andExpect(status().isOk())

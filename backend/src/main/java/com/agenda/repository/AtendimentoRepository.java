@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
 
-    List<Atendimento> findAllByOrderByNomeAsc();
+    List<Atendimento> findAllByOrderByTituloAsc();
 
     List<Atendimento> findByTituloContainingIgnoreCase(String titulo);
 
-    List<Atendimento> findByReceitaOrderByNomeAsc(Receita receita);
+    List<Atendimento> findByReceitaOrderByTituloAsc(Receita receita);
 }

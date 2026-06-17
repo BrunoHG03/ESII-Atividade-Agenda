@@ -31,7 +31,7 @@ public class AtendimentoController {
     // READ TUDO
     @GetMapping
     public ResponseEntity<List<Atendimento>> listar() {
-        List<Atendimento> atendimentos = repository.findAllByOrderByNomeAsc();
+        List<Atendimento> atendimentos = repository.findAllByOrderByTituloAsc();
         return ResponseEntity.ok(atendimentos);
     }
 
@@ -47,7 +47,7 @@ public class AtendimentoController {
     // READ POR RECEITA
     @GetMapping("/receita/{receita}")
     public ResponseEntity<List<Atendimento>> listarPorReceita(@PathVariable Receita receita) {
-        List<Atendimento> atendimentos = repository.findByReceitaOrderByNomeAsc(receita);
+        List<Atendimento> atendimentos = repository.findByReceitaOrderByTituloAsc(receita);
         return ResponseEntity.ok(atendimentos);
     }
 
