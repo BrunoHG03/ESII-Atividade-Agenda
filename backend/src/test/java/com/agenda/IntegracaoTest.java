@@ -47,7 +47,7 @@ class IntegracaoTest {
         // 3. ATUALIZAR Profissional (PUT)
         mockMvc.perform(put("/api/profissionais/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"nome\":\"Maria Silva\"}"))
+                .content("{\"nome\":\"Maria Silva\", \\\"categoria\\\": \\\"MEDICO\\\"}"))
                 .andExpect(status().isOk());
 
         // 4. DELETAR Profissional (DELETE)
