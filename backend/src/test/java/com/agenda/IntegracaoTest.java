@@ -33,7 +33,7 @@ class IntegracaoTest {
         // 1. CRIAR Profissional (POST)
         MvcResult result = mockMvc.perform(post("/api/profissionais")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"nome\":\"Maria\"}"))
+                .content("{\"nome\":\"Maria\", \"categoria\": \"MEDICO\"}"))
                 .andExpect(status().isCreated())
                 .andReturn();
         String jsonResposta = result.getResponse().getContentAsString();
